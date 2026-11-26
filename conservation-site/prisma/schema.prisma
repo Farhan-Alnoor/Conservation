@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+
+enum ConservationStatus {
+  LEAST_CONCERN
+  NEAR_THREATENED
+  VULNERABLE
+  ENDANGERED
+  CRITICALLY_ENDANGERED
+  EXTINCT_IN_THE_WILD
+}
+
+
+
+model Species {
+  id Int @id @default(autoincrement())
+  slug String @unique
+  commonName String
+  scientificName String
+  status ConservationStatus
+  summary String
+  threats       Threat[]
+  organizations Organization[]
+  populationRecords PopulationRecord[]
+  articles Article[]
+  createdAt DateTime @default(now())
+}
+
+
+
+model Threat {
+  id          Int       @id @default(autoincrement())
+  slug        String    @unique
+  name        String
+  description String
+  species     Species[]
+}
+
+model Organization {
+  id           Int       @id @default(autoincrement())
+  slug         String    @unique
+  name         String
+  description  String
+  websiteUrl   String
+  donateUrl    String?
+  volunteerUrl String?
+  species      Species[]
+}
+
+
+
+model PopulationRecord {
+  id        Int     @id @default(autoincrement())
+  year      Int
+  estimate  Int
+  source    String?
+  speciesId Int
+  note      String?
+  species   Species @relation(fields: [speciesId], references: [id], onDelete: Cascade)
+
+  @@unique([speciesId, year])
+}
+
+
+enum ArticleType {
+  NEWS
+  SUCCESS_STORY
+}
+
+model Article {
+  id          Int         @id @default(autoincrement())
+  slug        String      @unique
+  title       String
+  summary     String
+  body        String
+  type        ArticleType @default(NEWS)
+  publishedAt DateTime
+  sourceName  String?
+  sourceUrl   String?
+  species     Species[]
+}
