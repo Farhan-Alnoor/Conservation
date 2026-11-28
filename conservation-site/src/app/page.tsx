@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-
+import Hero from "@/components/Hero";
 export default async function Home() {
   const [speciesCount, organizationCount, threatCount, atRisk] =
     await Promise.all([
@@ -23,13 +23,8 @@ export default async function Home() {
   return (
     <main className="mx-auto max-w-5xl px-8 py-12">
       <section>
-        <h1 className="text-4xl font-bold">
-          Protecting the species that need us most
-        </h1>
-        <p className="mt-4 max-w-prose text-lg text-gray-600">
-          Explore endangered species, understand what threatens them, and find
-          the organizations working to bring them back.
-        </p>
+        <Hero/>
+        
         <Link
           href="/species"
           className="mt-6 inline-block rounded bg-green-700 px-5 py-2 font-medium text-white hover:bg-green-800"
